@@ -1,0 +1,39 @@
+{
+  "info": {
+    "name": "QSend 本地演示",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "本地 GET 查询",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://127.0.0.1:8765/get?hello=QSend",
+          "query": [{"key": "hello", "value": "QSend"}]
+        }
+      }
+    },
+    {
+      "name": "本地 JSON POST",
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8765/post",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"QSend\",\n  \"message\": \"你好，Qt！\"\n}",
+          "options": {"raw": {"language": "json"}}
+        }
+      }
+    },
+    {
+      "name": "查看 404 响应",
+      "request": {"method": "GET", "url": "http://127.0.0.1:8765/status/404"}
+    },
+    {
+      "name": "延迟 5 秒 · 可测试取消",
+      "request": {"method": "GET", "url": "http://127.0.0.1:8765/delay/5"}
+    }
+  ]
+}
