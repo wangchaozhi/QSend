@@ -3,14 +3,19 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QDir>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QPalette>
+#include <QSslSocket>
 #include <QTimer>
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     QCoreApplication::setOrganizationName("QSend");
     QCoreApplication::setApplicationName("QSend");
-    QCoreApplication::setApplicationVersion("0.1.0");
+    QCoreApplication::setApplicationVersion(QSEND_VERSION);
     app.setStyle("Fusion");
     QPalette palette;
     palette.setColor(QPalette::Window, QColor("#10151c"));
@@ -33,7 +38,17 @@ int main(int argc, char *argv[]) {
     parser.addOption({"send", "Send initial request immediately"});
     parser.addOption({"screenshot", "Save a window screenshot and exit (verification)", "path"});
     parser.addOption({"capture-delay", "Screenshot delay in milliseconds", "ms", "1500"});
+    parser.addOption({"runtime-info", "Write version and TLS runtime diagnostics then exit", "path"});
     parser.process(app);
+    if (parser.isSet("runtime-info")) {
+        const QJsonObject info{{"version", QCoreApplication::applicationVersion()},
+            {"qtVersion", qVersion()}, {"sslSupported", QSslSocket::supportsSsl()},
+            {"sslBackend", QSslSocket::activeBackend()},
+            {"sslBackends", QJsonArray::fromStringList(QSslSocket::availableBackends())}};
+        const QByteArray data = QJsonDocument(info).toJson();
+        QFile file(parser.value("runtime-info"));
+        return file.open(QIODevice::WriteOnly) && file.write(data) == data.size() ? 0 : 2;
+    }
     MainWindow window(parser.value("workspace"));
     if (parser.isSet("url")) window.openUrl(parser.value("url"));
     window.show();

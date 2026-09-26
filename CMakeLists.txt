@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(QSend VERSION 0.1.0 LANGUAGES CXX)
+include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,8 +28,24 @@ target_link_libraries(qsend_ui PUBLIC qsend_core Qt6::Widgets)
 
 qt_add_executable(QSend WIN32 src/main.cpp)
 target_link_libraries(QSend PRIVATE qsend_ui)
-set_target_properties(QSend PROPERTIES MACOSX_BUNDLE TRUE)
-install(TARGETS QSend BUNDLE DESTINATION . RUNTIME DESTINATION bin)
+target_compile_definitions(QSend PRIVATE QSEND_VERSION="${PROJECT_VERSION}")
+set_target_properties(QSend PROPERTIES
+    MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.wangchaozhi.qsend"
+    MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
+if(UNIX AND NOT APPLE)
+    set_target_properties(QSend PROPERTIES INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+install(TARGETS QSend BUNDLE DESTINATION . RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+option(QSEND_DEPLOY_RUNTIME "Deploy Qt runtime dependencies at install time" OFF)
+if(QSEND_DEPLOY_RUNTIME)
+    if(Qt6_VERSION VERSION_LESS 6.8)
+        message(FATAL_ERROR "Runtime packaging requires Qt 6.8 or newer")
+    endif()
+    qt_generate_deploy_app_script(TARGET QSend OUTPUT_SCRIPT deploy_script NO_TRANSLATIONS)
+    install(SCRIPT ${deploy_script})
+endif()
 
 include(CTest)
 if(BUILD_TESTING)
@@ -39,4 +56,5 @@ if(BUILD_TESTING)
     add_executable(qsend_ui_tests tests/ui_tests.cpp)
     target_link_libraries(qsend_ui_tests PRIVATE qsend_ui Qt6::Test)
     add_test(NAME ui COMMAND qsend_ui_tests -platform offscreen)
+    set_tests_properties(core ui PROPERTIES TIMEOUT 60)
 endif()

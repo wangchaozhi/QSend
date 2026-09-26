@@ -350,7 +350,7 @@ void MainWindow::buildUi() {
     shortcut(QKeySequence("Ctrl+Return"), [this] { sendRequest(); });
     shortcut(QKeySequence::Save, [this] { saveRequest(); });
     shortcut(QKeySequence::New, [this] { new_->click(); });
-    auto *version = label("QSend 0.1  ·  Qt 6", "muted");
+    auto *version = label(QString("QSend %1  ·  Qt 6").arg(QCoreApplication::applicationVersion()), "muted");
     statusBar()->addPermanentWidget(version);
 }
 

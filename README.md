@@ -1,5 +1,7 @@
 # QSend
 
+[![Build, test and release](https://github.com/wangchaozhi/QSend/actions/workflows/ci-release.yml/badge.svg)](https://github.com/wangchaozhi/QSend/actions/workflows/ci-release.yml)
+
 基于 **Qt 6 + C++17** 的桌面 HTTP API 调试工具，用于完成 Postman 常见的日常请求调试工作。界面采用 Qt Widgets，网络请求使用 Qt Network，项目使用 CMake 构建。
 
 这是一个可继续扩展的 MVP，当前重点是 HTTP 请求、响应检查、本地集合与环境管理。
@@ -10,9 +12,11 @@
 
 本次交付已经在 Windows x64 编译运行，18 个功能测试通过，包含本地 HTTP 与公开 HTTPS 实测。见 [验证记录](TEST_REPORT.md)。
 
-## 直接运行 Windows 版本
+## 下载与运行
 
-本仓库提供源码，构建方式见下文。如已获得配套 `QSend-Windows-x64.zip`，解压后双击 `QSend.exe`。请保留旁边的 DLL 与插件文件夹。该运行包包含 Qt 与 MSVC 运行依赖，无需安装 Qt。
+在 [GitHub Releases](https://github.com/wangchaozhi/QSend/releases) 下载对应平台：Windows x64 解压运行 `QSend.exe`；macOS Universal 运行 `QSend.app`；Linux x64 解压运行 `./run-qsend.sh`。请保留包内依赖文件，桌面应用无需安装 Qt。
+
+推送与 CMake 版本一致的 `vX.Y.Z` 标签会触发三端构建、测试、部署验证与自动发布。架构、系统依赖、签名限制、下载校验和操作步骤见 [发布说明](docs/RELEASING.md)。
 
 需要离线演示时，在源码目录运行 `python scripts/run-demo-server.py`，然后在应用中导入 `examples/local-demo.postman_collection.json`，即可测试本地 GET、JSON POST、404 和取消请求。服务只监听 `127.0.0.1:8765`，使用 Ctrl+C 结束。Python 只用于这个可选演示服务；桌面应用本身是原生 C++ 程序。
 
