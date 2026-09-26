@@ -44,7 +44,9 @@ def main():
         env.pop(key, None)
     env["PATH"] = os.pathsep.join(p for p in env.get("PATH", "").split(os.pathsep)
                                 if str(qt_root).lower() not in p.lower())
-    env["QT_QPA_PLATFORM"] = "offscreen"
+    # The Windows offscreen backend cannot find system fonts. Exercise the
+    # shipped native plugin so the screenshot also checks real text rendering.
+    env["QT_QPA_PLATFORM"] = "windows" if args.platform == "windows-x64" else "offscreen"
     env["QT_FORCE_STDERR_LOGGING"] = "1"
     hidden = qt_root.with_name(qt_root.name + "-qsend-ci-hidden")
     renamed = False

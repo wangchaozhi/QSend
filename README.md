@@ -10,7 +10,7 @@
 
 ![QSend 中文桌面界面](docs/images/qsend-preview.png)
 
-本次交付已经在 Windows x64 编译运行，18 个功能测试通过，包含本地 HTTP 与公开 HTTPS 实测。见 [验证记录](TEST_REPORT.md)。
+Windows x64、macOS Universal、Linux x64 的 CI 构建、18 个功能测试与部署包运行验证均已通过；Windows 另完成公开 HTTPS 实测。见 [验证记录](TEST_REPORT.md)。
 
 ## 下载与运行
 
