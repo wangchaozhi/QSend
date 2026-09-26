@@ -60,6 +60,7 @@ jobs:
           version: '6.8.3'
           arch: ${{ matrix.qt-arch }}
           cache: true
+          setup-python: false # Keep the explicitly selected Python 3.12.
           aqtversion: '==3.3.0'
       - name: Windows configure, build, test and deploy
         if: runner.os == 'Windows'

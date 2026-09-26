@@ -48,6 +48,16 @@ public:
         });
     }
 
+    ~LocalHttpServer() override
+    {
+        // QTcpServer owns accepted sockets. Disconnect callbacks before member
+        // destruction: closing a socket can emit disconnected after buffers_
+        // has already been destroyed (notably when a request is cancelled).
+        const auto sockets = server_.findChildren<QTcpSocket *>();
+        for (auto *socket : sockets)
+            QObject::disconnect(socket, nullptr, this, nullptr);
+    }
+
     bool listen() { return server_.listen(QHostAddress::LocalHost, 0); }
     QString baseUrl() const
     {
