@@ -65,10 +65,20 @@ try {
         $redistRoot = Join-Path $vsPath 'VC/Redist/MSVC'
         if (Test-Path -LiteralPath $redistRoot) {
             $redist = Get-ChildItem -LiteralPath $redistRoot -Directory |
-                Sort-Object { [version]$_.Name } -Descending |
+                Sort-Object {
+                    # Hosted images may also contain an alias such as v143.
+                    $parsedVersion = $null
+                    if ([version]::TryParse($_.Name, [ref]$parsedVersion)) { $parsedVersion }
+                    else { [version]'0.0' }
+                } -Descending |
                 ForEach-Object { Join-Path $_.FullName 'x64/Microsoft.VC143.CRT' } |
                 Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
             if ($redist) { Get-ChildItem -LiteralPath $redist -Filter '*.dll' | Copy-Item -Destination $deployPath }
+        }
+        foreach ($runtime in @('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')) {
+            if (-not (Test-Path -LiteralPath (Join-Path $deployPath $runtime))) {
+                throw "Required MSVC runtime was not deployed: $runtime"
+            }
         }
         Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE') -Destination $deployPath
         Write-Host "Deploy complete: $appPath"

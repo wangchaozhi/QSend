@@ -15,5 +15,5 @@ cp "$qt/plugins/platforms/libqoffscreen.dylib" "$app/Contents/PlugIns/platforms/
 # This is an ad-hoc integrity signature, not Developer ID signing/notarization.
 codesign --force --deep --sign - "$app"
 codesign --verify --deep --strict "$app"
-lipo -verify_arch arm64 x86_64 "$app/Contents/MacOS/QSend"
+lipo "$app/Contents/MacOS/QSend" -verify_arch arm64 x86_64
 echo "macOS universal package staged at $stage"
